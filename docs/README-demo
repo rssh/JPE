@@ -1,0 +1,9 @@
+
+  This is installation distributive of Java Partial Evaluator. 
+  Demo version is differ from production only by limitation to
+  number of compile time constants, which can be processed.
+
+  For documentation see UserGuide.odt (Open Office format) in doc directory.
+  For example of ant task look at demo directory.
+
+  JPE home page:  http://www.gradsoft.ua

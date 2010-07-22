@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="JPE demo" default="all" basedir=".">
+    <description> JPE project</description>
+
+    <!--TODO: move properties to file.  -->
+    <property name="jpehome" value=".." />
+   
+    <taskdef name="jpe" classname="ua.gradsoft.jpe.ant.JPETask">
+      <classpath>
+        <pathelement location="${jpehome}/lib/JPE.jar" />
+        <pathelement location="${jpehome}/lib/TermWare2.jar" />
+        <pathelement location="${jpehome}/lib/JavaChecker2.jar" />
+        <pathelement location="${jpehome}/lib/JavaChecker2Annotations.jar" />
+        <pathelement location="${jpehome}/lib/TermWareJPP.jar" />
+      </classpath>
+    </taskdef>
+
+    <target name="build-example1-t">
+      <jpe jpehome="${jpehome}"
+           input="input/example1"
+           output="output/example1-t" 
+           createOutputDir="true"
+           fork="true"
+           >
+        <ctconstant name="DEBUG" value="true" />
+        <devirtualization enabled="true" />
+        <eliminateUnreachable enabled="true" >
+           <reachable classnamepattern="x.X1"/>
+        </eliminateUnreachable>
+      </jpe>
+    </target>
+
+    <target name="build-example1-f">
+      <jpe jpehome="${jpehome}"
+           input="input/example1"
+           output="output/example1-f" 
+           createOutputDir="true"
+           >
+        <ctconstant name="DEBUG" value="false" />
+        <devirtualization enabled="true" />
+        <eliminateUnreachable enabled="true" >
+           <reachable classnamepattern="x.X1"/>
+        </eliminateUnreachable>
+      </jpe>
+    </target>
+
+    <target name="example1" depends="build-example1-t,build-example1-f" />
+
+    <target name="all" depends="example1" />
+
+</project>

@@ -1,0 +1,11 @@
+
+domain(JPE,
+
+  system(ID, javaFacts(JPEFacts,"ua.gradsoft.jpe.JPEFacts"),
+         ruleset(ID($x) -> $x),
+         FirstTop
+  )
+
+);
+         
+  

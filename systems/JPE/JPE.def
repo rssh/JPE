@@ -1,0 +1,501 @@
+
+domain(JPE,
+
+  system(JPE, javaFacts(JPEFacts,"ua.gradsoft.jpe.JPEFacts"),
+         ruleset(
+ 
+           import(general),
+
+           JPE(ClassOrInterfaceModel(
+                $modifiers,
+                $type,
+                $name,
+                $typeParameters,
+                $extendsList,
+                $implementsList,
+                $body,
+               $context)) 
+                 ->
+               ClassOrInterfaceModel(
+                     $modifiers,
+                     $type,
+                     $name,
+                     $typeParameters,
+                     $extendsList,
+                     $implementsList,
+                     JPE($body),
+                     $context),
+
+
+           JPE(EnumModel($modifiers,
+                     $identifier,
+                     $implements,
+                     $constants,
+                     $members,$ctx))
+                               -> EnumModel($modifiers,$identifier,
+                                            $implements,
+                                            JPE($constants),JPE($members),
+                                            $ctx),
+
+           JPE(AnnotationTypeModel($modifiers,$name,$typeBody,$ctx))
+                 -> AnnotationTypeModel($modifiers,$name,JPE($typeBody),$ctx),
+
+
+           JPE(ClassOrInterfaceBody($x)) -> ClassOrInterfaceBody(JPE($x)),
+
+           JPE([]) -> [],
+           JPE(cons($x,$y)) -> cons(JPE($x),JPE($y)), 
+
+           JPE(MemberVariableModel($modifiers,
+                               $typeRef,
+                               $name,
+                               $initializer,
+                               $model))   
+                    [ isJPEField($model,$y) ] ->
+                           MemberVariableModel($modifiers,
+                                               $typeRef,
+                                               $name,
+                                               $y,
+                                               $model) 
+                                             !->
+                           MemberVariableModel($modifiers,
+                                               $typeRef,
+                                               $name,
+                                               JPE($initializer),
+                                               $model), 
+
+
+           JPE(MethodModel($modifiers,
+                       $typeParameters,
+                       $returnType,
+                       $identifier,
+                       $formalParameters,
+                       $trowsNameList,
+                       $blockModel,
+                       $context))
+                                   ->
+                           MethodModel($modifiers,
+                                       $typeParameters,
+                                       $returnType,
+                                       $identifier,
+                                       $formalParameters,
+                                       $trowsNameList,
+                                       JPE($blockModel),
+                                       $context),
+
+
+           JPE(ConstructorModel($modifiers,
+                            $typeParameters,
+                            $identifier,
+                            $formalParameters,
+                            $throwsNameList,
+                            $blockModel,
+                            $ctx
+           ))
+                       ->
+                      ConstructorModel($modifiers,
+                                   $typeParameters,
+                                   $identifier,
+                                   $formalParameters,
+                                   $throwsNameList,
+                                   JPE($blockModel),
+                                   $ctx
+                       ),
+
+           JPE(InitializerModel($modifiers,$blockModel,$ctx))
+                          -> InitializerModel($modifiers,JPE($blockModel),$ctx),
+ 
+
+           JPE(EnumConstantModel($identifier,$args,$subtype))
+               -> EnumConstantModel($identifier,JPE($args),JPE($subtype)),
+
+           JPE(EnumAnonimousTypeModel($identifier,$members,$ctx))
+               ->EnumAnonimousTypeModel($identifier,JPE($members),$ctx),
+
+           JPE(AnnotationMethodModel($modifiers,$name,$type,$default,$ctx))
+               -> AnnotationMethodModel($modifiers,$name,$type,$default,$ctx),
+
+
+           JPE(Block($x)) -> Block(JPE($x)),
+
+           JPE(Arguments($x)) -> Arguments(JPE($x)),
+
+           JPE(LocalVariableDeclarationModel($variableModels, $ctx)) 
+                    -> 
+                    LocalVariableDeclarationModel(JPE($variableModels), $ctx),
+
+           JPE(LocalVariableModel($modifiers,$type,$identifier,$init,$ctx)) 
+                    ->
+           LocalVariableModel($modifiers,$type,$identifier,JPE($init),$ctx),
+
+           JPE(AssertStatementModel($expr,$ctx)) -> 
+                                    AssertStatementModel(JPE($expr),$ctx),
+
+           JPE(BlockStatementModel($x,$ctx)) -> 
+                                 BlockStatementModel(JPE($x),$ctx), 
+
+           JPE(BreakStatementModel($label,$ctx)) -> 
+                                BreakStatementModel($label,$ctx),
+
+           JPE(CatchModel($fp,$block,$ctx)) -> 
+                                  CatchModel($fp,JPE($block),$ctx),
+
+           JPE(CatchSequenceModel($seq,$ctx)) ->
+                                  CatchSequenceModel(JPE($seq),$ctx),
+
+           JPE(ClassOrInterfaceDeclarationModel($localType,$ctx)) ->
+                   ClassOrInterfaceDeclarationModel(JPE($localType),$ctx),
+
+           JPE(ContinueStatementModel($label,$ctx)) -> 
+                               ContinueStatementModel($label,$ctx),
+ 
+           JPE(DoStatementModel($s,$expr,$ctx)) -> 
+                        DoStatementModel(JPE($s),JPE($expr),$ctx), 
+
+           JPE(EmptyStatementModel($ctx)) ->
+                                   EmptyStatementModel($ctx),
+
+           JPE(ExplicitSuperConstructorInvocationModel($p,$args,$ctx))-> 
+                 ExplicitSuperConstructorInvocationModel($p,JPE($args),$ctx),
+
+           JPE(ExplicitThisConstructorInvocationModel($args,$ctx)) -> 
+                       ExplicitThisConstructorInvocationModel(JPE($args),$ctx),
+
+           #TODO: add loop unrolling in some cases.
+           JPE(ForStatementModel(
+             TraditionalForLoopHeadModel($init,$cond,$incr),$stm,$ctx
+                            )) 
+                             ->
+           ForStatementModel(
+             TraditionalForLoopHeadModel(JPE($init),JPE($cond),JPE($incr)),JPE($stm),$ctx
+                            ), 
+
+            JPE(StatementExpressionList($x)) -> StatementExpressionList(JPE_List($x)),
+
+                             
+           #TODO: add loop unrolling in some cases.
+           JPE(ForStatementModel(
+             ForEachLoopHeadModel($type,$name,$collections),$stm,$ctx
+                            )) 
+                             ->
+             ForStatementModel(
+                ForEachLoopHeadModel($type,$name,JPE($collections)),
+                JPE($stm),
+                $ctx
+             ),
+
+           JPE(IfStatementModel($expr,$s1,$s2,$ctx)) ->
+                          IfStatementModel(JPE($expr),JPE($s1),JPE($s2),$ctx), 
+
+           IfStatementModel(BooleanLiteral(true),$s1,$s2,$ctx) -> $s1,
+           IfStatementModel(BooleanLiteral(false),$s1,$s2,$ctx) -> $s2,
+
+           JPE(LabeledStatementModel($label,$stm,$ctx)) -> 
+                            LabeledStatementModel($label,JPE($stm),$ctx), 
+
+           JPE(ReturnStatementModel($expr,$ctx)) -> 
+                              ReturnStatementModel(JPE($expr),$ctx),
+
+           JPE(SwitchStatementModel($expr,$labels,$ctx)) -> 
+                      SwitchStatementModel(JPE($expr),JPE($labels),$ctx), 
+
+           JPE(SwitchLabelBlockModel($expr,$childs,$ctx)) 
+                     -> SwitchLabelBlockModel(JPE($expr),JPE($childs),$ctx), 
+
+           SwitchStatementModel(IntegerLiteral($x),$labels,$ctx) 
+                     -> EvalSwitchLabels(IntegerLiteral($x),$clabels)
+                            where ( $clabels <- $labels ),
+
+           SwitchStatementModel(CharacterLiteral($x),$labels,$ctx) 
+                     -> EvalSwitchLabels(CharacterLiteral($x),$clabels)
+                            where ( $clabels <- $labels ),
+                     
+           EvalSwitchLabels($x,
+                   [SwitchLabelBlockModel($x,$childs,$ctx1):$rest]
+                           )  ->  $childs,
+
+           EvalSwitchLabels($x,
+                   [SwitchLabelBlockModel(default,$childs,$ctx1):$rest]
+                           )  ->  $childs,
+                         
+           EvalSwitchLabels($x,
+                   [SwitchLabelBlockModel($y,$childs,$ctx1):$rest]
+                           ) -> EvalSwitchLabels($x,$rest),
+
+           EvalSwitchLabels($x,NIL) -> NIL,
+            
+  
+
+
+           JPE(SynchronizedStatementModel($expr,$stm,$ctx)) -> 
+                         SynchronizedStatementModel(JPE($expr),JPE($stm),$ctx),
+
+           JPE(ThrowStatementModel($expr,$ctx)) ->  
+                                ThrowStatementModel(JPE($expr),$ctx), 
+
+           JPE(TryStatementModel($block,$catchSeq,$fin,$ctx)) -> 
+                 TryStatementModel(JPE($block),JPE($catchSeq),JPE($fin),$ctx), 
+           
+           JPE(WhileStatementModel($expr,$child,$ctx)) ->
+                             WhileStatementModel(JPE($expr),JPE($child),$ctx), 
+
+           JPE(StatementExpressionStatement($x,$ctx)) -> 
+                          StatementExpressionStatement(JPE($x),$ctx),
+
+           JPE(AllocationExpressionModel($type,$args,$ctx)) ->
+                      AllocationExpressionModel($type,JPE($args),JPE_Body($type),$ctx),
+             
+           JPE(AdditiveExpressionModel($x,$y,$op,$ctx))->
+                           AdditiveExpressionModel(JPE($x),JPE($y),$op,$ctx),
+           JPE(AdditiveExpressionModel($x))-> JPE($x),
+
+
+           AdditiveExpressionModel(IntegerLiteral($x),IntegerLiteral($y),
+                                   "+",$ctx) -> IntegerLiteral($x+$y),
+
+           AdditiveExpressionModel(IntegerLiteral($x),IntegerLiteral($y),
+                                   "-",$ctx) -> IntegerLiteral($x-$y),
+
+           AdditiveExpressionModel(StringLiteral($x),StringLiteral($y),
+                                   "+",$ctx) -> StringLiteral(String.concat($x+$y)),
+
+           AdditiveExpressionModel(StringLiteral($x),IntegerLiteral($y),
+                                   "+",$ctx) -> StringLiteral(String.concat($x,toString($y))),
+
+
+           JPE(AndExpressionModel($x,$y,$ctx)) ->
+                                     AndExpressionModel(JPE($x),JPE($y),$ctx),
+
+           AndExpressionModel(BooleanLiteral(false),$y,$ctx)
+                                           -> BooleanLiteral(false),
+           AndExpressionModel($x,BooleanLiteral(false),$ctx)
+                                           -> BooleanLiteral(false),
+
+           AndExpressionModel(BooleanLiteral(true),$y,$ctx) -> $y,
+           AndExpressionModel($x,BooleanLiteral(true),$ctx) -> $x,
+
+           JPE(ArrayIndexExpressionModel($a,$i,$ctx)) -> 
+                           ArrayIndexExpressionModel(JPE($a),JPE($i),$ctx), 
+
+           JPE(ArrayInitializerModel($list,$ctx)) -> 
+                                    ArrayInitializerModel(JPE($list),$ctx),
+
+           JPE(AssigmentExpressionModel($left,$right,$op,$ctx)) -> 
+                   AssigmentExpressionModel(JPE($left),JPE($right),$op,$ctx),
+
+           JPE(CastExpressionModel($type,$sub,$ctx)) -> 
+                               CastExpressionModel($type,JPE($sub),$ctx),
+
+           JPE(ClassLiteralModel($type,$ctx)) -> 
+                                        ClassLiteralModel($type,$ctx),
+
+           JPE(ConditionalAndExpressionModel($x,$y,$ctx)) -> 
+                           ConditionalAndExpressionModel(JPE($x),JPE($y),$ctx),
+
+           ConditionalAndExpressionModel(BooleanLiteral(false),$y,$ctx) -> 
+                                                        BooleanLiteral(false), 
+           ConditionalAndExpressionModel($x,BooleanLiteral(false),$ctx) -> 
+                                                        BooleanLiteral(false), 
+           ConditionalAndExpressionModel(BooleanLiteral(true),$y,$ctx) -> $y,
+           ConditionalAndExpressionModel($x,BooleanLiteral(true),$ctx) -> $x,
+
+
+           JPE(ConditionalExpressionModel($c,$x,$y,$ctx))->
+                      ConditionalExpressionModel(JPE($c),JPE($x),JPE($y),$ctx), 
+
+           ConditionalExpressionModel(BooleanLiteral(true),$x,$y,$ctx)->$x,
+           ConditionalExpressionModel(BooleanLiteral(false),$x,$y,$ctx)->$y,
+
+
+           JPE(ConditionalOrExpressionModel($x,$y,$ctx))-> 
+                         ConditionalOrExpressionModel(JPE($x),JPE($y),$ctx), 
+
+           ConditionalOrExpressionModel(BooleanLiteral(true),$y,$ctx) -> 
+                                                        BooleanLiteral(true), 
+           ConditionalOrExpressionModel(BooleanLiteral(false),$y,$ctx) -> 
+                                                                         $y,
+           ConditionalOrExpressionModel($x,BooleanLiteral(true),$ctx) -> 
+                                                        BooleanLiteral(true), 
+           ConditionalOrExpressionModel($x,BooleanLiteral(false),$ctx) -> 
+                                                                         $x,
+
+           JPE(EqualityExpressionModel($x,$y,$op,$ctx)) -> 
+                           EqualityExpressionModel(JPE($x),JPE($y),$op,$ctx),
+
+           EqualityExpressionModel($x,$x,"==",$ctx) -> BooleanLiteral(true),
+           EqualityExpressionModel($x,$x,"!=",$ctx) -> BooleanLiteral(false),
+
+           JPE(ExclusiveOrExpressionModel($x,$y,$ctx)) -> 
+                            ExclusiveOrExpressionModel(JPE($x),JPE($y),$ctx),
+
+           JPE(FieldModel($obj,$id,$fm,$ctx))
+              [ isJPEField($fm,$y) ]  ->  $y
+              |
+              [ isStaticFinalLiteralField($fm,$y) ] -> $y
+                                            !->  FieldModel($obj,$id,$fm,$ctx),
+
+           ## TODO: think about inlining in some cases.
+           JPE(FunctionCallModel($name,$args,$method,$ctx)) ->
+                       FunctionCallModel($name,JPE($args),$method,$ctx),
+
+           JPE(MethodCallModel($obj,$ident,$args,$method,$ctx)) -> 
+                     MethodCallModel(JPE($obj),$ident,JPE($args),$method,$ctx),
+
+           JPE(StaticFieldModel($typeRef,$identifier, $fm,$ctx)) 
+              [ isJPEField($fm,$y) ]  ->  $y
+              |
+              [ isStaticFinalLiteralField($fm,$y) ] -> $y
+                                            !->  StaticFieldModel($typeRef,$identifier, $fm,$ctx), 
+
+           JPE(VariableModel($name,$model)) 
+             [ isJPEField($model, $y) ] -> $y 
+              |
+             [ isStaticFinalLiteralField($model,$y) ] -> $y
+                                      !-> VariableModel($name,$model), 
+
+           JPE(InclusiveOrExpressionModel($x,$y,$ctx)) ->  
+                   InclusiveOrExpressionModel(JPE($x),JPE($y),$ctx), 
+
+           JPE(InnerAllocationExpressionModel($ownerType,$type,$exprs,$ctx)) 
+                  -> 
+           InnerAllocationExpressionModel($ownerType,$type,JPE($exprs),$ctx),
+
+           JPE(InstanceOfExpressionModel($type,$expr,$ctx)) -> 
+                  InstanceOfExpressionModel($type,JPE($expr),$ctx), 
+
+           JPE(MultiplicativeExpressionModel($x,$y,$op,$ctx)) ->
+                       MultiplicativeExpressionModel(JPE($x),JPE($y),$op,$ctx),
+
+           MultiplicativeExpressionModel(IntegerLiteral($x),
+                                         IntegerLiteral($y),"*",$ctx) ->
+                                                IntegerLiteral($x*$y),
+
+           JPE(PostfixExpressionModel($x,$op,$ctx)) ->
+                           PostfixExpressionModel(JPE($x),$op,$ctx),
+
+           JPE(PredecrementExpressionModel($x,$ctx)) -> 
+                                   PredecrementExpressionModel(JPE($x),$ctx), 
+
+           JPE(PreincrementExpressionModel($x,$ctx)) -> 
+                                   PreincrementExpressionModel(JPE($x),$ctx), 
+
+           JPE(RelationalExpressionModel($x,$y,$op,$ctx)) -> 
+                         RelationalExpressionModel(JPE($x),JPE($y),$op,$ctx), 
+
+           RelationalExpressionModel(IntegerLiteral($x),
+                                     IntegerLiteral($y),
+                                     "<", $ctx)
+                                          [ $x < $y ] -> BooleanLiteral(true)
+                                                     !-> BooleanLiteral(false),
+
+           RelationalExpressionModel(IntegerLiteral($x),
+                                     IntegerLiteral($y),
+                                     "<=", $ctx)
+                                          [ $x <= $y ] -> BooleanLiteral(true)
+                                                      !-> BooleanLiteral(false),
+
+           RelationalExpressionModel(IntegerLiteral($x),
+                                     IntegerLiteral($y),
+                                     ">", $ctx)
+                                          [ $x > $y ] -> BooleanLiteral(true)
+                                                      !-> BooleanLiteral(false),
+
+           RelationalExpressionModel(IntegerLiteral($x),
+                                     IntegerLiteral($y),
+                                     ">=", $ctx)
+                                          [ $x >= $y ] -> BooleanLiteral(true)
+                                                      !-> BooleanLiteral(false),
+
+           RelationalExpressionModel(FloatingPointLiteral($x),
+                                     FloatingPointLiteral($y),
+                                     "<", $ctx)
+                                          [ $x < $y ] -> BooleanLiteral(true)
+                                                     !-> BooleanLiteral(false),
+
+           RelationalExpressionModel(FloatingPointLiteral($x),
+                                     FloatingPointLiteral($y),
+                                     "<=", $ctx)
+                                          [ $x <= $y ] -> BooleanLiteral(true)
+                                                     !-> BooleanLiteral(false),
+
+           RelationalExpressionModel(FloatingPointLiteral($x),
+                                     FloatingPointLiteral($y),
+                                     ">", $ctx)
+                                          [ $x > $y ] -> BooleanLiteral(true)
+                                                     !-> BooleanLiteral(false),
+
+           RelationalExpressionModel(FloatingPointLiteral($x),
+                                     FloatingPointLiteral($y),
+                                     ">=", $ctx)
+                                          [ $x >= $y ] -> BooleanLiteral(true)
+                                                     !-> BooleanLiteral(false),
+
+           JPE(ShiftExpressionModel($x,$y,$op,$ctx)) ->
+                              ShiftExpressionModel(JPE($x),JPE($y),$op,$ctx), 
+
+           JPE(SpecializedMethodCallModel($bounds,$obj,
+                                          $ident,$args,$mm,$ctx))-> 
+             SpecializedMethodCallModel($bounds,$obj,$ident,JPE($args),$mm,$ctx),
+
+           JPE(SuperModel($x,$ctx)) -> SuperModel(JPE($x),$ctx),
+           
+           JPE(SuperPrefixExpressionModel($ctx)) -> SuperPrefixExpressionModel($ctx), 
+          
+           JPE(CaseConstantModel($t,$expr,$type,$ctx)) -> 
+                                    CaseConstantModel($t,$expr,$type,$ctx),
+          
+           JPE(ThisModel($x,$ctx)) -> ThisModel(JPE($x),$ctx),
+           JPE(ThisPrefixExpressionModel($ctx)) -> 
+                              ThisPrefixExpressionModel($ctx), 
+
+           JPE(UnaryExpressionModel($x,$op,$ctx)) -> 
+                           UnaryExpressionModel(JPE($x),$op,$ctx), 
+           
+           UnaryExpressionModel(BooleanLiteral(false),"!",$ctx) 
+                                           -> BooleanLiteral(true),
+           UnaryExpressionModel(BooleanLiteral(true),"!",$ctx) 
+                                           -> BooleanLiteral(false),
+
+           UnaryExpressionModel(IntegerLiteral($x),"+",$ctx) 
+                                           -> IntegerLiteral($x),
+
+           UnaryExpressionModel(IntegerLiteral($x),"-",$ctx) 
+                                           -> IntegerLiteral(-$x),
+
+           UnaryExpressionModel(FloatingPointLiteral($x),"+",$ctx) 
+                                           -> FloatingPointLiteral($x),
+
+           UnaryExpressionModel(FloatingPointLiteral($x),"-",$ctx) 
+                                           -> FloatingPointLiteral(-$x),
+
+           JPE(BooleanLiteral($x)) -> BooleanLiteral($x),
+           JPE(IntegerLiteral($x)) -> IntegerLiteral($x),
+           JPE(FloatingPointLiteral($x)) -> FloatingPointLiteral($x),
+           JPE(StringLiteral($x)) -> StringLiteral($x),
+           JPE(CharacterLiteral($x)) -> CharacterLiteral($x),
+           JPE(NullLiteral()) -> NullLiteral(),
+
+           cons(NIL,$x) -> $x,
+
+           JPE(TypeRef($tname,$type)) -> TypeRef($tname,$type),
+
+           JPE_Body(TypeRef($tname,$type)) 
+                    [ $type.isAnonimous() ] -> JPE_Body($type.getModelTerm())
+                                           !-> NIL,
+
+           JPE_Body(AnonimousClassModel($name,$super,$members,$ctx))
+                     -> JPE($members),
+
+           JPE_List(NIL) -> NIL,
+           JPE_List([$x:$y]) -> cons(JPE($x),JPE_List($y)),
+
+
+           XXX -> ALL
+
+         ),
+         BottomTop
+  )
+
+);
+         
+  

@@ -1,0 +1,8 @@
+
+JPE is a partial evaluator for Java programs. This tool transform java programs, substitute values of constants, which is known in compilation time, do symbolic simplification on received source and do few gloabl optimizations, such as devirtualization and elimination of unused classes and methods. 
+
+Such approach is quite useful in cases, where we need develop several variations of one program and we does not want to distribute along with one variation code of other. For example, when some program must be released in standard and professional editions (and in demo edition) or some game can be can be released for different versions of mobile phones and so on. JPE using is better alternative than plain preprocessing, as JPE use same language, does not confuse IDE and additionally can automatically perform global optiomizations.  
+
+  User guide (eng):
+  Demo version:
+  Buy now:

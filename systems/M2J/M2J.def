@@ -1,0 +1,431 @@
+
+domain(M2J,
+
+  system(M2J, javaFacts(JPEFacts,"ua.gradsoft.jpe.JPEFacts"),
+         ruleset(
+ 
+           import(general,apply),
+           import(general,plus),
+           import(general,minus),
+
+           ClassOrInterfaceModel($modifiers,
+                                 $type,
+                                 $name,
+                                 $typeParameters,
+                                 $extendsList,
+                                 $implementsList,
+                                 $body,
+                                 $context) 
+            [ isNotReachable($context.getTypeModel()) 
+                       ] -> BLANK
+                        !-> 
+                            TypeDeclaration(
+                                   FinalIfDevirtualization($modifiers,
+                                              $context.getTypeModel()),
+                                ClassOrInterfaceDeclaration($type,
+                                   $name,
+                                   $typeParameters,
+                                   ExtendsList(R($extendsList)),
+                                   ImplementsList(R($implementsList)),
+                                   $body)),
+
+
+           EnumModel($modifiers,
+                     $identifier,
+                     $implements,
+                     $constants,
+                     $members,$ctx)
+            [ isNotReachable($context.getTypeModel()) 
+                       ] -> BLANK
+                        !->
+                                 TypeDeclaration($modifiers,
+                                      EnumDeclaration( 
+                                         $identifier,
+                                         $implements,
+                                         EnumBody(APPEND($constants,$members)))),
+
+           APPEND([$x:$y],$z) -> cons($x,APPEND($y,$z)),
+           APPEND([],$z) -> $z,
+           APPEND($x,[]) -> $x,
+
+           AnnotationTypeModel($modifiers,$name,$body,$ctx)
+            [ isNotReachable($context.getTypeModel()) ] -> BLANK
+                              !->
+                                TypeDeclaration($modifiers,
+                                  AnnotationTypeDeclaration(
+                                     $name,
+                                     AnnotationTypeBody($body)
+                                  )
+                                ),
+
+           MemberVariableModel($modifiers,
+                               $typeRef,
+                               $name,
+                               $initializer,
+                               $model)   
+              [ isNotReachableField($model) ] -> BLANK
+                                        !->
+                                   ClassOrInterfaceBodyDeclaration(
+                                     $modifiers,
+                                     FieldDeclaration(R($typeRef),
+                                        [VariableDeclarator(
+                                            VariableDeclaratorId($name,0),
+                                            VariableInitializer(R($initializer)))
+                                        ])
+                                   ),
+
+           MethodModel($modifiers,
+                       $typeParameters,
+                       $returnType,
+                       $identifier,
+                       $formalParameters,
+                       $trowsNameList,
+                       $blockModel,
+                       $context)
+            [ $context.getTopLeveBlockOwnerModel().isSynthetic() ] -> BLANK
+           |
+            [ isNotReachableMethod($context.getTopLeveBlockOwnerModel()) ] -> BLANK
+                                  !->
+                                   ClassOrInterfaceBodyDeclaration(
+                                     $modifiers,
+                                     MethodDeclaration(
+                                         $typeParameters,
+                                         R($returnType),
+                                         MethodDeclarator(
+                                           $identifier,
+                                           $formalParameters 
+                                         ),
+                                         NameListOrNil($trowsNameList),
+                                         $blockModel
+                                     )
+                                   ),
+
+
+             NameListOrNil(NIL) -> NIL,
+             NameListOrNil($x) -> NameList(R($x)),
+
+           ConstructorModel($modifiers,
+                            $typeParameters,
+                            $identifier,
+                            $formalParameters,
+                            $throwsNameList,
+                            $blockModel,
+                            $ctx
+           )
+                       ->
+                                   ClassOrInterfaceBodyDeclaration(
+                                     $modifiers,
+                                     ConstructorDeclaration(
+                                        R($typeParameters),
+                                        $identifier,
+                                        $formalParameters,
+                                        NameListOrNil($throwsNameList),
+                                        NIL,
+                                        $blockModel
+                                     )
+                                   ),
+
+           InitializerModel($modifiers,$blockModel,$ctx) -> 
+                                    Initializer($modifiers,$blockModel),
+
+           EnumConstantModel($identifier,NIL,$subtype)
+              -> EnumConstant($identifier,NIL,$subtype),
+
+           EnumConstantModel($identifier,$args,$subtype)
+              -> EnumConstant($identifier,Arguments(R($args)),$subtype),
+
+
+           EnumAnonimousTypeModel($identifier,$members,$ctx)
+              -> ClassOrInterfaceBody($members),
+
+           AnnotationMethodModel($modifiers,$name,$type,NIL,$ctx)
+              -> AnnotationTypeMemberDeclaration(
+                                 $modifiers,R($type),$name),
+
+           AnnotationMethodModel($modifiers,$name,$type,$default,$ctx)
+              -> AnnotationTypeMemberDeclaration(
+                                 $modifiers,R($type),
+                                 $name,DefaultValue($default)
+                                                ),
+
+           R(TypeRef($tname,$ttype)) -> $ttype.getFullNameAsTerm(),
+           R(NIL) -> NIL,
+           R(R($x)) -> R($x),
+           R([$x:$y]) -> cons(R($x),R($y)),
+           R(TypeArguments($x)) -> TypeArguments(R($x)),
+           R(TypeArgument($x)) -> TypeArgument(R($x)),
+           R($x) -> $x,
+           
+           
+ 
+
+           BlockStatementModel($x,$ctx) -> Block($x),
+
+           LocalVariableDeclarationModel($variableModels, $ctx) 
+                    -> LocalVariableDeclaration($modifiers,R($type),$vdcls)
+                         where (
+                             $modifiers <- LV_GetModifiers($variableModels),
+                             $type <- LV_GetType($variableModels),
+                             $vdcls <- LV_GetVdcls($variableModels)
+                         ),
+
+           LV_GetModifiers([$x:$y]) -> LV_GetModifiers($x) ,
+           LV_GetModifiers(
+                LocalVariableModel($modifiers,
+                        $type,$identifier,$init,$ctx)) -> $modifiers,
+
+
+           LV_GetType([$x:$y]) -> LV_GetType($x),
+           LV_GetType(LocalVariableModel(
+               $modifiers,$type,$identifier,$init,$ctx)) -> $type,
+
+           LV_GetVdcls([$x:$y]) -> cons(LV_GetVdcl($x),LV_GetVdcls($y)),
+           LV_GetVdcls([]) -> [],
+
+           LV_GetVdcl(LocalVariableModel(
+               $modifiers,$type,$identifier,$init,$ctx)) 
+           -> 
+              VariableDeclarator(VariableDeclaratorId($identifier,0),$init),
+
+           AssertStatementModel($expr,$ctx) -> AssertStatement($expr),
+           BlockStatementModel($x,$ctx) -> BlockStatement($x),
+           BreakStatementModel($label,$ctx) -> BreakStatement($label),
+           CatchModel($fp,$block,$ctx) -> Catch($fp,$block),
+           CatchSequenceModel($seq,$ctx) -> CatchSequence($seq),
+           ClassOrInterfaceDeclarationModel($localType,$ctx) -> $localType,
+           ContinueStatementModel($label,$ctx) -> ContinueStatement($label),
+           DoStatementModel($s,$expr,$ctx) -> DoStatement($s,$expr),
+           EmptyStatementModel($ctx) -> EmptyStatement(),
+           ExplicitSuperConstructorInvocationModel($p,$args,$ctx)-> 
+                ExplicitSuperConstructorInvocation($p,Arguments(R($args))),
+           ExplicitThisConstructorInvocationModel($args,$ctx)-> 
+                ExplicitThisConstructorInvocation(Arguments(R($args))),
+
+           ForStatementModel(
+             TraditionalForLoopHeadModel($init,$cond,$incr),$stm,$ctx
+                            ) 
+                             ->
+             ForStatement(
+                TraditionalForLoopHead(R($init),R($cond),R($incr)),$stm
+             ),
+
+           ForStatementModel(
+             ForEachLoopHeadModel($type,$name,$collections),$stm,$ctx
+                            ) 
+                             ->
+             ForStatement(
+                ForEachLoopHead(R($type),$name,$collections),$stm
+             ),
+
+           IfStatementModel($expr,$s1,$s2,$ctx) -> IfStatement($expr,$s1,$s2),
+
+           LabeledStatementModel($label,$stm,$ctx) -> 
+                                           LabeledStatement($label,$stm),
+
+           ReturnStatementModel($expr,$ctx) -> ReturnStatement($expr),
+
+           SwitchStatementModel($expr,$labels,$ctx) 
+                                   -> SwitchStatement($expr,$labels),
+           SwitchLabelBlockModel($expr,$childs,$ctx) 
+                                   -> SwitchStatementLabelBlock($expr,$childs),
+
+           SynchronizedStatementModel($expr,$stm,$ctx) -> SynchronizedStatement($expr,$stm),
+
+           ThrowStatementModel($expr,$ctx) -> ThrowStatement($expr), 
+
+           TryStatementModel($block,$catchSeq,$fin,$ctx) 
+                      -> TryStatement($block,$catchSeq,$fin), 
+           
+           WhileStatementModel($expr,$child,$ctx) 
+                      -> WhileStatement($expr,$child),
+
+           AllocationExpressionModel($type,$args,$ctx) ->
+                             AllocationExpressionModel($type,$args,TypeBody($type),$ctx),
+
+           AllocationExpressionModel($type,$args,$tbody,$ctx) 
+             [ isReferenceType($type) ] 
+                   -> ArrayAllocationExpression(
+                            getReferencedType($type),$args)
+            |
+             [ isAnonimousType($type) ] 
+                   -> AnonimousTypeAllocationExpression(ptype(getSuperClassOrInterface($type)),$tbody,$args)
+            !->
+                   AllocationExpression(R($type),NIL,Arguments($args),NIL),
+             
+           ArrayAllocationExpression($type,$args)
+                         -> ArrayAllocationExpression($type,$args,0),
+                       
+           ArrayAllocationExpression($type,$args,$x)
+                 [isReferenceType($type)] 
+                     -> ArrayAllocationExpression(
+                           getReferencedType($type),$args,$x+1)
+                    !->
+                        AllocationExpression(ptype($type),NIL,
+                              ArrayDimsAndInits(
+                                ArrayDims(cons(ArrayDim(List.car($args)),
+                                               createArrayDims($x)))),NIL),
+
+           createArrayDims(0) -> NIL,
+           createArrayDims($x) [ isInt($x) && $x>0 ] -> 
+                                    cons(ArrayDim(),createArrayDims($x-1)),
+
+           AnonimousTypeAllocationExpression($type,$body,$args) ->
+                   AllocationExpression(R($type),NIL,Arguments($args),ClassOrInterfaceBody($body)),
+
+           AdditiveExpressionModel($x,$y,$op,$ctx)-> 
+                                            AdditiveExpression($x,$op,$y),
+           AndExpressionModel($x,$y,$ctx) -> AndExpression($x,$y),
+           ArrayIndexExpressionModel($a,$i,$ctx) -> ArrayIndex($a,$i),
+           ArrayInitializerModel($list,$ctx) -> ArrayInitializer($list),
+           AssigmentExpressionModel($left,$right,$op,$ctx) -> 
+                                               Expression($left,$op,$right),
+           CastExpressionModel($type,$sub,$ctx) -> CastExpression(R($type),$sub),
+           ClassLiteralModel($type,$ctx) -> ClassLiteral(R($type)),
+           ConditionalAndExpressionModel($x,$y,$ctx) -> ConditionalAndExpression($x,$y),
+           ConditionalExpressionModel($c,$x,$y,$ctx) -> ConditionalExpression($c,$x,$y),
+           ConditionalOrExpressionModel($x,$y,$ctx) -> ConditionalOrExpression($x,$y),
+
+           EqualityExpressionModel($x,$y,$op,$ctx) -> EqualityExpression($x,$op,$y),
+           R(EqualityExpressionModel($x,$y,$op,$ctx)) -> EqualityExpression(R($x),$op,R($y)),
+           ExclusiveOrExpressionModel($x,$y,$ctx) -> ExclusiveOrExpression($x,$y),
+           FieldModel($obj,$id,$fm,$ctx) -> Field(R($obj),$id),
+
+           FunctionCallModel($name,$args,$method,$ctx) 
+             [ isStaticMethod($method) ] -> MethodCall(ptype(
+                                                    $method.getTypeModel()),
+                                                    $name,
+                                                    Arguments(R($args)))
+                                        !-> FunctionCall($name,Arguments(R($args))),
+
+           MethodCallModel($obj,$ident,$args,$method,$ctx) 
+                  -> MethodCall(R($obj),$ident,Arguments(R($args))),
+
+           StaticFieldModel($typeRef,$identifier,
+                    $memberVariable,$ctx) -> AppendName(R($typeRef),$identifier),
+
+
+           AppendName(Name($x),$z) -> Name(List.append($z,$x)),
+
+           VariableModel($name,$model) 
+             [ isStaticField($model) ] -> Field($model.getOwner().getFullNameAsTerm(),$name) 
+                                      !-> $name,
+
+           InclusiveOrExpressionModel($x,$y,$ctx) -> InclusiveOrExpression($x,$y), 
+           InnerAllocationExpressionModel($ownerType,$type,$exprs,$ctx) -> PrimaryExpression(R($ownerType),AllocationExpressionModel($type,$exprs,$ctx)),
+
+           InstanceOfExpressionModel($type,$expr,$ctx) -> InstanceOfExpression($expr,R($type)),
+
+           MultiplicativeExpressionModel($x,$y,$op,$ctx) ->
+                                      MultiplicativeExpression($x,$op,$y),           
+           PostfixExpressionModel($x,$op,$ctx) -> PostfixExpression($x,$op),
+           PredecrementExpressionModel($x,$ctx) -> PreDecrementExpression($x),
+           PreincrementExpressionModel($x,$ctx) -> PreIncrementExpression($x),
+           RelationalExpressionModel($x,$y,$op,$ctx) -> RelationalExpression($x,$op,$y),
+           ShiftExpressionModel($x,$y,$op,$ctx) -> ShiftExpression($x,$op,$y),
+
+           SpecializedMethodCallModel($bounds,$obj,$name,$args,$mm,$ctx) 
+              ->  SpecializedMethodCall(R($obj),R($bounds),$name,Arguments(R($args))),
+
+           SuperModel($x,$ctx) -> Super(R($x)),
+           SuperPrefixExpressionModel($ctx) -> SuperPrefix(), 
+           
+           CaseConstantModel($t,$expr,$type,$ctx) [$type.isEnum()] -> SwitchLabel(R($expr))
+                                                                  !-> R($t),
+           
+           ThisModel($x,$ctx) -> This(R($x)),
+           ThisPrefixExpressionModel($ctx) -> ThisPrefix(), 
+
+           UnaryExpressionModel($x,$op,$ctx) -> UnaryExpression($op,R($x)),
+           
+
+           FormalParameterModel($modifiers,$typeref,$identifier,$ctx)
+             [ isVarArgsModifiers($modifiers) ]
+               -> FormalParameter($modifiers,
+                              ptype(getReferencedType($typeref)),$identifier)
+              !-> FormalParameter($modifiers,R($typeref),$identifier),
+
+           TypeVariableModel($x,[]) -> TypeArgument(R($x)),
+
+           TypeVariableModel($x,$bounds) -> TypeArgument(R($x),TypeBound(R($bounds))),
+
+           AnnotationInstanceModel($nvpairs,$model) -> 
+              NormalAnnotation($model.getAnnotationModel().getFullNameAsTerm(),
+                               MemberValuePairs($nvpairs)
+                              ),
+
+           isReferenceType(TypeRef($tname,$ttype)) -> $ttype.isArray(),
+           isReferenceType(
+             @class("ua.gradsoft.javachecker.models.JavaTypeModel",$x)
+           ) -> 
+                  $x.isArray(),
+
+           getReferencedType(TypeRef($tname,$ttype)) 
+                             ->  getReferencedType($ttype), 
+
+           getReferencedType(
+             @class("ua.gradsoft.javachecker.models.JavaTypeModel",$x)
+           )
+             [ $x.isArray() ] -> $x.getReferencedType()
+                             !-> ERROR_getReferencedType($x),
+                             
+
+           ptype(
+             @class("ua.gradsoft.javachecker.models.JavaTypeModel",$x)
+           )                   
+                             ->    $x.getFullNameAsTerm(),
+
+           ptype(TypeRef($tname,$ttype)) -> $ttype.getFullNameAsTerm(),
+
+           getSuperClassOrInterface(TypeRef($tname,$ttype)) -> 
+                      getSuperClassOrInterface($ttype),
+
+           getSuperClassOrInterface(
+             @class("ua.gradsoft.javachecker.models.JavaTypeModel",$x)
+           ) 
+           [ $x.getSuperClass().getFullName() == "java.lang.Object" ]
+             -> carIfNotNil($x.getSuperInterfaces(),$x.getSuperClass())
+                                 !-> $x.getSuperClass() ,
+             
+           carIfNotNil([$x:$y],$z) -> $x,
+           carIfNotNil([],$z) -> $z,
+      
+
+           isAnonimousType(TypeRef($tname,$ttype)) -> $ttype.isAnonimous(),
+           isAnonimousType(
+             @class("ua.gradsoft.javachecker.models.JavaTypeModel",$x)
+           )
+                              ->                $x.isAnonimousType(),
+           
+           isStaticMethod($method) -> $method.getModifiers().isStatic(),
+           isStaticField($field) -> $field.getModifiers().isStatic(),
+
+           #
+           # HACK
+           #   TODO:  add to TermWare ability to use constants.
+           isVarArgsModifiers(Modifiers($n,$annotations)) 
+                 [ isVarArgsIntModifier($n) ] -> true
+                                             !-> false,
+
+           FinalIfDevirtualization(Modifiers($x,$annotations),$tm)
+              -> Modifiers(SetFinalizeBitIfPossible($x,$tm),$annotations),
+
+           SetFinalizeBitIfPossible($x,$tm)
+              [ isCanBeFinalForDevirtualization($tm) ] 
+                       -> $z [ [ addFinalBitfield($x,$z) ]  ]
+                      !-> $x,
+           
+           TypeBody(TypeRef($tname,$type)) 
+                    [ $type.isAnonimous() ] -> TypeBody($type.getModelTerm())
+                                           !-> NIL,
+
+           TypeBody(AnonimousClassModel($name,$super,$members,$ctx))
+                     -> $members,
+
+           QQQ -> ALL
+         ),
+         BottomTop
+  )
+
+);
+         
+  
