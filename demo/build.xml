@@ -7,11 +7,7 @@
    
     <taskdef name="jpe" classname="ua.gradsoft.jpe.ant.JPETask">
       <classpath>
-        <pathelement location="${jpehome}/lib/JPE.jar" />
-        <pathelement location="${jpehome}/lib/TermWare2.jar" />
-        <pathelement location="${jpehome}/lib/JavaChecker2.jar" />
-        <pathelement location="${jpehome}/lib/JavaChecker2Annotations.jar" />
-        <pathelement location="${jpehome}/lib/TermWareJPP.jar" />
+        <fileset dir="${jpehome}/lib" includes="**/*.jar" />
       </classpath>
     </taskdef>
 
