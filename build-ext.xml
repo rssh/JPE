@@ -3,36 +3,50 @@
     <description>Extensions to JPE project</description>
   
     <property file="build.properties" />
+    <import file="build.xml" />
 
-   
-
-    <taskdef name="jpe" classname="ua.gradsoft.jpe.ant.JPETask">
+    <target name="define-jpe" depends="retrieve">
+     <taskdef name="jpe" classname="ua.gradsoft.jpe.ant.JPETask">
       <classpath>
-        <pathelement location="${jpehome}/lib/JPE.jar" />
-        <pathelement location="${jpehome}/lib/TermWare2.jar" />
-        <pathelement location="${jpehome}/lib/JavaChecker2.jar" />
-        <pathelement location="${jpehome}/lib/JavaChecker2Annotations.jar" />
-        <pathelement location="${jpehome}/lib/TermWareJPP.jar" />
+        <pathelement location="${jpehome}/lib/JPE-${version}.jar" />
+        <pathelement location="${jpehome}/lib/TermWare-${termware.version}.jar" />
+        <pathelement location="${jpehome}/lib/TermWareJPP-${termwarejpp.version}.jar" />
+        <pathelement location="${jpehome}/lib/JavaChecker-${javachecker.version}.jar" />
+        <pathelement location="${jpehome}/lib/JavaChecker2Annotations-${version}.jar" />
       </classpath>
-    </taskdef>
+     </taskdef>
+    </target>
 
-    <target name="build-demo-sources">
+    <target name="define-jpe-jars" depends="retrieve">
+    <path id="jpe.jars">
+      <pathelement 
+            location="${jpehome}/lib/TermWare-${termware.version}.jar" />
+      <pathelement 
+            location="${jpehome}/lib/TermWareJPP-${termwarejpp.version}.jar" />
+      <pathelement 
+            location="${jpehome}/lib/TermWareJPP-${termwarejpp.version}.jar" />
+      <pathelement 
+            location="${jpehome}/lib/JavaChecker-${javachecker.version}.jar" />
+      <pathelement 
+            location="${jpehome}/lib/JavaChecker2Annotations-${javachecker.version}.jar" />
+       <pathelement location="${jpehome}/lib/ant-${ant.dependency.version}.jar" />
+    </path>
+    </target>
+
+    <target name="build-demo-sources" depends="define-jpe, define-jpe-jars">
       <jpe jpehome="${jpehome}"
            input="src"
            output="output/jpe-demo" 
            createOutputDir="true"
+           debugLevel="10"
            >
         <includejars>
-          <pathelement location="${jpehome}/lib/TermWare2.jar" />
-          <pathelement location="${jpehome}/lib/JavaChecker2.jar" />
-          <pathelement location="${jpehome}/lib/JavaChecker2Annotations.jar" />
-          <pathelement location="${jpehome}/lib/TermWareJPP.jar" />
-          <pathelement location="${jpehome}/lib/ant.jar" />
+          <path refid="jpe.jars" />
         </includejars>
         <ctconstant name="DEMO" value="true" />
         <ctconstant name="DEBUG" value="false" />
         <ctconstant name="IN_IDE" value="false" />
-        <ctconstant name="VERSION" value="${version}" />
+        <ctconstant name="VERSION" value='"${version}"' />
         <devirtualization enabled="true" />
         <eliminateUnreachable enabled="true" >
            <reachable classnamepattern="ua.gradsoft.jpe.Main"/>
@@ -44,14 +58,10 @@
     <target name="compile-demo-sources" depends="build-demo-sources">
      <javac srcdir="output/jpe-demo" includes="**/*.java" debug="true" >
       <classpath>
-        <pathelement location="${jpehome}/lib/TermWare2.jar" />
-        <pathelement location="${jpehome}/lib/JavaChecker2.jar" />
-        <pathelement location="${jpehome}/lib/JavaChecker2Annotations.jar" />
-        <pathelement location="${jpehome}/lib/TermWareJPP.jar" />
-        <pathelement location="${jpehome}/lib/ant.jar" />
+        <path refid="jpe.jars" />
       </classpath>
      </javac>
-     <jar destfile="lib/JPEDemo.jar" index="true" >
+     <jar destfile="lib/JPEDemo-${version}.jar" index="true" >
       <fileset dir="output/jpe-demo" includes="**/*.class"/>
       <fileset dir="systems" includes="**/*.def"/>
       <manifest> 
@@ -61,23 +71,19 @@
      </jar>
     </target>
 
-    <target name="build-nd-sources">
+    <target name="build-nd-sources" depends="define-jpe, define-jpe-jars">
       <jpe jpehome="${jpehome}"
            input="src"
            output="output/jpe-nd" 
            createOutputDir="true"
            >
         <includejars>
-          <pathelement location="${jpehome}/lib/TermWare2.jar" />
-          <pathelement location="${jpehome}/lib/JavaChecker2.jar" />
-          <pathelement location="${jpehome}/lib/JavaChecker2Annotations.jar" />
-          <pathelement location="${jpehome}/lib/TermWareJPP.jar" />
-          <pathelement location="${jpehome}/lib/ant.jar" />
+          <path refid="jpe.jars" />
         </includejars>
         <ctconstant name="DEMO" value="false" />
         <ctconstant name="DEBUG" value="false" />
         <ctconstant name="IN_IDE" value="false" />
-        <ctconstant name="VERSION" value="${version}" />
+        <ctconstant name="VERSION" value='"${version}"' />
         <devirtualization enabled="true" />
         <eliminateUnreachable enabled="true" >
            <reachable classnamepattern="ua.gradsoft.jpe.Main"/>
@@ -89,14 +95,10 @@
     <target name="compile-nd-sources" depends="build-nd-sources">
      <javac srcdir="output/jpe-nd" includes="**/*.java" debug="true" >
       <classpath>
-        <pathelement location="${jpehome}/lib/TermWare2.jar" />
-        <pathelement location="${jpehome}/lib/JavaChecker2.jar" />
-        <pathelement location="${jpehome}/lib/JavaChecker2Annotations.jar" />
-        <pathelement location="${jpehome}/lib/TermWareJPP.jar" />
-        <pathelement location="${jpehome}/lib/ant.jar" />
+        <path refid="jpe.jars" />
       </classpath>
      </javac>
-     <jar  destfile="lib/JPEND.jar" index="true">
+     <jar  destfile="lib/JPEND-${version}.jar" index="true">
       <fileset dir="output/jpe-nd" includes="**/*.class"/>
       <fileset dir="systems" includes="**/*.def"/>
       <manifest> 
@@ -107,16 +109,19 @@
     </target>
 
     <target name="build-production-distributive" depends="compile-nd-sources">
-      <copy file="lib/JPEND.jar" 
-            tofile="final-distributives/jpe-prod/lib/JPE.jar" 
+      <copy file="lib/JPEND-${version}.jar" 
+            tofile="final-distributives/jpe-prod/lib/JPE-${version}.jar" 
             overwrite="true"
             />
-      <copy file="lib/TermWare2.jar" todir="final-distributives/jpe-prod/lib"/>
-      <copy file="lib/TermWareJPP.jar" todir="final-distributives/jpe-prod/lib"
+      <copy file="lib/TermWare-${termware.version}.jar" 
+            todir="final-distributives/jpe-prod/lib"/>
+      <copy file="lib/TermWareJPP-${termwarejpp.version}.jar" 
+            todir="final-distributives/jpe-prod/lib"
       />
-      <copy file="lib/JavaChecker2.jar" todir="final-distributives/jpe-prod/lib"
+      <copy file="lib/JavaChecker-${javachecker.version}.jar" 
+            todir="final-distributives/jpe-prod/lib"
       />
-      <copy file="lib/JavaChecker2Annotations.jar" 
+      <copy file="lib/JavaChecker2Annotations-${javachecker.version}.jar" 
             todir="final-distributives/jpe-prod/lib"
       />
       <copy file="docs/UserGuide.odt" todir="final-distributives/jpe-prod/doc"/>
@@ -133,16 +138,19 @@
     </target>
 
     <target name="build-demo-distributive" depends="compile-demo-sources">
-      <copy file="lib/JPEDemo.jar" 
-            tofile="final-distributives/jpe-demo/lib/JPE.jar" 
+      <copy file="lib/JPEDemo-${version}.jar" 
+            tofile="final-distributives/jpe-demo/lib/JPE-${version}.jar" 
             overwrite="true"
             />
-      <copy file="lib/TermWare2.jar" todir="final-distributives/jpe-demo/lib"/>
-      <copy file="lib/TermWareJPP.jar" todir="final-distributives/jpe-demo/lib"
+      <copy file="lib/TermWare-${termware.version}.jar" 
+            todir="final-distributives/jpe-demo/lib"/>
+      <copy file="lib/TermWareJPP-${termwarejpp.version}.jar" 
+            todir="final-distributives/jpe-demo/lib"
       />
-      <copy file="lib/JavaChecker2.jar" todir="final-distributives/jpe-demo/lib"
+      <copy file="lib/JavaChecker-${javachecker.version}.jar" 
+            todir="final-distributives/jpe-demo/lib"
       />
-      <copy file="lib/JavaChecker2Annotations.jar" 
+      <copy file="lib/JavaChecker2Annotations-${javachecker.version}.jar" 
             todir="final-distributives/jpe-demo/lib"
       />
       <copy file="docs/UserGuide.odt" todir="final-distributives/jpe-demo/doc"/>
@@ -185,16 +193,19 @@
 
     <target name="default" depends="build-production-distributive,build-demo-distributive" />
 
-    <taskdef name="odt2html" classname="ua.gradsoft.odt2html.Odt2HtmlAntTask">
-     <classpath>         
-       <pathelement location="${odt2htmlhome}/ODT2HTML.jar"/>     
-     </classpath>
-    </taskdef>
-
-    <target name="UserGuide.html">      
-      <odt2html input="doc/UserGuide.odt"  output="doc/UserGuide.html" /> 
+    <target name="define-odt2html" depends="retrieve" >
+        <taskdef name="odt2html" 
+                 classname="ua.gradsoft.odt2html.Odt2HtmlAntTask"
+        >
+         <classpath>         
+          <pathelement location="lib/odt2html-${odt2html.version}.jar"/>     
+         </classpath>
+        </taskdef>
     </target>
 
+    <target name="UserGuide.html" depends="define-odt2html">      
+      <odt2html input="doc/UserGuide.odt"  output="doc/UserGuide.html" /> 
+    </target>
 
 
 </project>

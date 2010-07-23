@@ -2,7 +2,7 @@
  * Main.java
  *
  *
- * Copyright (c) 2006-2007 GradSoft  Ukraine
+ * Copyright (c) 2006-2010 GradSoft  Ukraine
  * http://www.gradsoft.ua
  * All Rights Reserved
  */
@@ -110,7 +110,7 @@ public class Main {
             }else{
                 System.out.println("JPE version "+CompileTimeConstants.VERSION);
             }
-            System.out.println("(C) Grad-Soft Ltd, 2007");
+            System.out.println("(C) Grad-Soft Ltd, 2007-2010");
             System.out.println("http://www.gradsoft.ua");            
         }
         

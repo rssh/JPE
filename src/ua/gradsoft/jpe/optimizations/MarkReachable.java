@@ -75,12 +75,7 @@ public class MarkReachable {
           if (typeModel instanceof JavaTermTypeAbstractModel) {
               markDepended((JavaTermTypeAbstractModel)typeModel,configuration);
           }else if(typeModel.isArray()){
-              try{
                 markExternal(typeModel.getReferencedType(),configuration);
-              }catch(NotSupportedException ex){
-                  // impossible.
-                  throw new AssertException("Impossible",ex);
-              }
           }else if(typeModel instanceof JavaTypeArgumentBoundTypeModel){
               JavaTypeArgumentBoundTypeModel ttm = (JavaTypeArgumentBoundTypeModel)typeModel;
               markExternal(ttm.getOrigin(),configuration);
@@ -135,13 +130,8 @@ public class MarkReachable {
      }
      for(JavaInitializerModel inm: initializers) {
          if (inm.isSupportBlockModel()) {
-             try {
                JavaTopLevelBlockModel block = inm.getTopLevelBlockModel();
                markUsage(block, configuration,debug);
-             }catch(NotSupportedException ex){
-                 // impossible ?
-                 break;
-             }             
          }
      }     
      List<JavaConstructorModel> constructors = typeModel.getConstructorModels();     
@@ -164,22 +154,11 @@ public class MarkReachable {
              markExternal(tm,configuration);
          }
          if (cn.isSupportBlockModel()) {
-             try {
                JavaTopLevelBlockModel block = cn.getTopLevelBlockModel();
                markUsage(block, configuration,debug);
-             }catch(NotSupportedException ex){
-                 // impossible ?
-                 break;
-             }
          }
      }
-     Collection<List<JavaMethodModel>> mss = Collections.emptyList();
-     try {
-         mss=typeModel.getMethodModels().values();
-     }catch(NotSupportedException ex){
-         /* nothing */
-         ;
-     }
+     Collection<List<JavaMethodModel>> mss = typeModel.getMethodModels().values();
      if (debug) {
          System.out.println("Methods, size()="+mss.size());
      }     
@@ -200,14 +179,10 @@ public class MarkReachable {
              }
              markExternal(m.getResultType(),configuration);
              if (m.isSupportBlockModel()) {
-                 try {
                     JavaTopLevelBlockModel block = m.getTopLevelBlockModel();
                     if (block!=null) {
                       markUsage(block, configuration, debug);
                     }
-                 }catch(NotSupportedException ex){
-                     throw new AssertException("isSupportBlockModel is true, but getTopLevelBlockModel is not supported",ex);
-                 }                 
              }
          }
      }
@@ -386,13 +361,7 @@ public class MarkReachable {
    
    public void printUnused(JavaTypeModel typeModel, JavaFacts facts) throws TermWareException, EntityNotFoundException
    {
-       Collection<List<JavaMethodModel>> mmss = Collections.emptyList();
-       try {
-          mmss = typeModel.getMethodModels().values();
-       }catch(NotSupportedException ex){
-           ;
-       }
-             
+       Collection<List<JavaMethodModel>> mmss = typeModel.getMethodModels().values();
        
        for(List<JavaMethodModel> mms: mmss) {
            for(JavaMethodModel mm: mms) {
@@ -412,12 +381,7 @@ public class MarkReachable {
            }
        }
        
-       Collection<JavaMemberVariableModel> vs = Collections.emptyList();
-       try {
-           vs=typeModel.getMemberVariableModels().values();
-       }catch(NotSupportedException ex){
-           ; /* do nothing */
-       }
+       Collection<JavaMemberVariableModel> vs = typeModel.getMemberVariableModels().values();
        
        for(JavaMemberVariableModel v: vs) {
            if (v.getModifiers().isPrivate()) {

@@ -1,0 +1,44 @@
+<ivysettings>
+ <settings defaultResolver="global.chain" checkUpToDate="false" />
+ <!--<properties file="build.properties" />-->
+ <property name="ibiblio-maven2-root" value="http://repo1.maven.org/maven2/" />
+ <namespaces>
+  <namespace name="maven2" >  
+  <rule> <!-- for junit -->
+   <fromsystem>
+    <src org="org.junit" module="junit" />
+    <dest org="junit" module="junit" />
+   </fromsystem>
+   <tosystem>
+     <src org="junit" module="junit" />
+     <dest org="org.junit" module="junit" />
+   </tosystem>
+  </rule>
+  </namespace>  
+  <namespace name="gradsoft" />  
+ </namespaces>
+ 
+ <resolvers>
+  <ibiblio name="ibiblio" root="${ibiblio-maven2-root}"
+           m2compatible="true" namespace="maven2" />
+  <url name="read.datacenter.gradsoft.ua" namespace="gradsoft" >
+     <ivy pattern="http://datacenter.gradsoft.ua/public.repository/[organization]/[module]/ivys/ivy-[revision].xml" />
+     <artifact pattern="http://datacenter.gradsoft.ua/public.repository/[organization]/[module]/[type]s/[artifact]-[revision].[ext]" />
+  </url>
+  <ssh name="datacenter.gradsoft.ua" namespace="gradsoft" 
+       publishPermissions="0664" >
+     <ivy pattern="ssh://datacenter.gradsoft.ua/repo/[organization]/[module]/ivys/ivy-[revision].xml" />
+     <artifact pattern="ssh://datacenter.gradsoft.ua/repo/[organization]/[module]/[type]s/[artifact]-[revision].[ext]" />
+  </ssh>
+  <chain name="global.chain" >
+   <resolver ref="ibiblio" />
+   <resolver ref="read.datacenter.gradsoft.ua" />
+  </chain>
+ </resolvers>
+ 
+ <modules>
+      <module organisation="ua.gradsoft" name="jpe" 
+              resolver="global.chain" />
+ </modules>
+
+</ivysettings>

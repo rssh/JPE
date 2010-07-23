@@ -77,6 +77,12 @@ public class JPEFacts extends DefaultFacts
               String tmName = tm.getFullName();
               if (tmName.endsWith(configuration_.getCompileTimeClassname())) {                
                   String value = configuration_.getCompileTimeProperties().get(mv.getName());
+                  //System.err.print("getCompileTimeProperty for "+mv.getName());
+                  //if (value==null) {
+                  //    System.err.println("null");
+                  //}else{
+                  //    System.err.println(value);
+                  //}
                   if (value!=null) {      
                      StringReader reader = new StringReader(value);
                      Term optionTerm = TermWare.getInstance().getTermFactory().createAtom("Expression");

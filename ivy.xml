@@ -1,0 +1,40 @@
+<ivy-module version="1.0">
+ <info organisation="ua.gradsoft" module="jpe" />
+ <configurations>
+  <conf name="default" description="provide jar" />
+  <conf name="test" description="provide jar with tests" />
+  <conf name="production-distributive" extends="default"
+        description="provide production distributive" />
+  <conf name="demo-distributive" extends="default" 
+        description="provide demo distributive" />
+ </configurations>
+ <publications>
+    <artifact name="JPE" type="jar" conf="default" />
+    <artifact name="jpe-prod" type="zip" conf="production-distributive" />
+    <artifact name="jpe-demo" type="zip" conf="demo-distributive" />
+ </publications>
+ <dependencies>
+   <!--
+     now installer must be set before building of javachecker
+   <dependency org="izpack" name="installer" rev="3.10.2" 
+               conf="src->default" transitive="false" />
+   -->
+   <dependency org="org.junit" name="junit" rev="3.8" 
+               conf="test->default" />
+   <dependency org="ua.gradsoft" name="termware" 
+               rev="[2.3.3,)"
+               conf="*->*" >
+    <artifact name="TermWare" type="jar" />
+   </dependency>
+   <dependency org="ua.gradsoft" name="javachecker" 
+               rev="[2.5.2,)" >
+        <artifact name="JavaChecker" type="jar" />
+        <artifact name="JavaChecker2Annotations" type="jar" />
+   </dependency>
+   <dependency org="org.apache.ant" name="ant" rev="1.7.1" 
+               conf="default->default">
+        <artifact name="ant" type="jar" />
+   </dependency>
+ </dependencies>
+</ivy-module>
+
