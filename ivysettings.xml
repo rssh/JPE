@@ -30,6 +30,11 @@
      <ivy pattern="ssh://datacenter.gradsoft.ua/repo/[organization]/[module]/ivys/ivy-[revision].xml" />
      <artifact pattern="ssh://datacenter.gradsoft.ua/repo/[organization]/[module]/[type]s/[artifact]-[revision].[ext]" />
   </ssh>
+  <ssh name="swrite.datacenter.gradsoft.ua" namespace="gradsoft" >
+    <ivy pattern="ssh://datacenter.gradsoft.ua/srepo/[organization]/[module]/ivys/ivy-[revision].xml" />
+    <artifact pattern="ssh://datacenter.gradsoft.ua/srepo/[organization]/[module]/[type]s/[artifact]-[revision].[ext]" />
+  </ssh>
+
   <chain name="global.chain" >
    <resolver ref="ibiblio" />
    <resolver ref="read.datacenter.gradsoft.ua" />

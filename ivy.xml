@@ -7,11 +7,13 @@
         description="provide production distributive" />
   <conf name="demo-distributive" extends="default" 
         description="provide demo distributive" />
+  <conf name="doc"  
+        description="provide documentation" />
  </configurations>
  <publications>
-    <artifact name="JPE" type="jar" conf="default" />
     <artifact name="jpe-prod" type="zip" conf="production-distributive" />
     <artifact name="jpe-demo" type="zip" conf="demo-distributive" />
+    <artifact name="UserGuide" type="html" conf="doc" />
  </publications>
  <dependencies>
    <!--
@@ -31,7 +33,7 @@
         <artifact name="JavaChecker" type="jar" />
         <artifact name="JavaChecker2Annotations" type="jar" />
    </dependency>
-   <dependency org="org.apache.ant" name="ant" rev="1.7.1" 
+   <dependency org="org.apache.ant" name="ant" rev="[1.7.1,)" 
                conf="default->default">
         <artifact name="ant" type="jar" />
    </dependency>
