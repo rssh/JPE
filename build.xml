@@ -15,4 +15,10 @@
       <copy file="dist/JPE.jar" tofile="lib/JPE-${version}.jar" overwrite="true" />
     </target>
 
+    <target name="clean-all" depends="clean">
+      <delete>
+       <fileset dir="lib" includes="**/*.jar" />
+      </delete>
+    </target>
+
 </project>

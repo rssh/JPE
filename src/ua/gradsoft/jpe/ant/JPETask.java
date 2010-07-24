@@ -305,14 +305,14 @@ public class JPETask extends Task {
         }
         
         Path classpath=cmd.createClasspath(getProject());
-        classpath.createPathElement().setPath(configuration_.getJPEHome()+File.separator+"lib"+File.separator+"TermWare2.jar");
-        classpath.createPathElement().setPath(configuration_.getJPEHome()+File.separator+"lib"+File.separator+"JavaChecker2.jar");
-        classpath.createPathElement().setPath(configuration_.getJPEHome()+File.separator+"lib"+File.separator+"JavaChecker2Annotations.jar");
-        classpath.createPathElement().setPath(configuration_.getJPEHome()+File.separator+"lib"+File.separator+"TermWareJPP.jar");
+        String libdir = configuration_.getJPEHome()+File.separator+"lib"+File.separator;
+        File f = new File(libdir);
+        String libs[]=f.list();
+        for(String libname:libs) {
+           classpath.createPathElement().setPath(libdir+libname);
+        }
         if (CompileTimeConstants.IN_IDE)       {
             classpath.createPathElement().setPath(configuration_.getJPEHome()+File.separator+"dist"+File.separator+"JPE.jar");
-        }else{
-            classpath.createPathElement().setPath(configuration_.getJPEHome()+File.separator+"lib"+File.separator+"JPE.jar");
         }
         
         if (configuration_.isDevirtualizationEnabled()) {
