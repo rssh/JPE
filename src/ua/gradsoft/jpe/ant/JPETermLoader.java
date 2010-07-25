@@ -13,6 +13,7 @@ import ua.gradsoft.termware.TermLoader;
 import ua.gradsoft.termware.exceptions.AssertException;
 import ua.gradsoft.termware.exceptions.ExternalException;
 import ua.gradsoft.termware.exceptions.ResourceNotFoundException;
+import ua.gradsoft.termware.termloaders.FileOrClassTermLoader;
 import ua.gradsoft.termware.termloaders.GenericInputStreamSource;
 
 /**
@@ -33,6 +34,11 @@ public class JPETermLoader extends TermLoader
    
     public InputStreamSource getSource(String name) throws ResourceNotFoundException, ExternalException
     {
+      try {
+          return fsTermLoader.getSource(name);
+      } catch (ResourceNotFoundException ex) {
+          /* do nothing */
+      }
       ClassLoader cl=JPETermLoader.class.getClassLoader();
       if (cl==null) {
           throw new ExternalException(new AssertException("Can't get classloader for JPETermLoader"));
@@ -44,6 +50,6 @@ public class JPETermLoader extends TermLoader
       return new GenericInputStreamSource(inputStream,name);
     }
     
-    
+    FileOrClassTermLoader fsTermLoader = new FileOrClassTermLoader();
     
 }

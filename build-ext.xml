@@ -112,58 +112,59 @@
 
     <target name="build-production-distributive" depends="compile-nd-sources">
       <copy file="lib/JPEND-${version}.jar" 
-            tofile="final-distributives/jpe-prod/lib/JPE-${version}.jar" 
-            overwrite="true"
+        tofile="final-distributives/jpe-prod-${version}/lib/JPE-${version}.jar" 
+        overwrite="true"
             />
       <copy file="lib/TermWare-${termware.version}.jar" 
-            todir="final-distributives/jpe-prod/lib"/>
+            todir="final-distributives/jpe-prod-${version}/lib"/>
       <copy file="lib/TermWareJPP-${termwarejpp.version}.jar" 
-            todir="final-distributives/jpe-prod/lib"
+            todir="final-distributives/jpe-prod-${version}/lib"
       />
       <copy file="lib/JavaChecker-${javachecker.version}.jar" 
-            todir="final-distributives/jpe-prod/lib"
+            todir="final-distributives/jpe-prod-${version}/lib"
       />
       <copy file="lib/JavaChecker2Annotations-${javachecker.version}.jar" 
-            todir="final-distributives/jpe-prod/lib"
+            todir="final-distributives/jpe-prod-${version}/lib"
       />
-      <copy file="docs/UserGuide.odt" todir="final-distributives/jpe-prod/doc"/>
+      <copy file="docs/UserGuide.odt" todir="final-distributives/jpe-prod-${version}/doc"/>
       <copy file="docs/README-prod" 
-            tofile="final-distributives/jpe-prod/README"/>
-      <copy todir="final-distributives/jpe-prod/demo">
+            tofile="final-distributives/jpe-prod-${version}/README"/>
+      <copy todir="final-distributives/jpe-prod-${version}/demo">
         <fileset dir="demo" excludes="CVS/*,**/CVS" />
       </copy>
       <zip destfile="final-distributives/jpe-prod-${version}.zip"
            basedir="final-distributives"
-           includes="jpe-prod/**/*.*,jpe-prod/README"
-           excludes="CVS/*,**/CVS"
+           includes="jpe-prod-${version}/**/*.*,jpe-prod-${version}/README"
+           excludes="CVS/*,**/CVS,.svn/**,**/.svn"
       />
     </target>
 
     <target name="build-demo-distributive" depends="compile-demo-sources">
       <copy file="lib/JPEDemo-${version}.jar" 
-            tofile="final-distributives/jpe-demo/lib/JPE-${version}.jar" 
-            overwrite="true"
+        tofile="final-distributives/jpe-demo-${version}/lib/JPE-${version}.jar" 
+        overwrite="true"
             />
       <copy file="lib/TermWare-${termware.version}.jar" 
-            todir="final-distributives/jpe-demo/lib"/>
+            todir="final-distributives/jpe-demo-${version}/lib"/>
       <copy file="lib/TermWareJPP-${termwarejpp.version}.jar" 
-            todir="final-distributives/jpe-demo/lib"
+            todir="final-distributives/jpe-demo-${version}/lib"
       />
       <copy file="lib/JavaChecker-${javachecker.version}.jar" 
-            todir="final-distributives/jpe-demo/lib"
+            todir="final-distributives/jpe-demo-${version}/lib"
       />
       <copy file="lib/JavaChecker2Annotations-${javachecker.version}.jar" 
-            todir="final-distributives/jpe-demo/lib"
+            todir="final-distributives/jpe-demo-${version}/lib"
       />
-      <copy file="docs/UserGuide.odt" todir="final-distributives/jpe-demo/doc"/>
+      <copy file="docs/UserGuide.odt" 
+            todir="final-distributives/jpe-demo-${version}/doc"/>
       <copy file="docs/README-prod" 
-            tofile="final-distributives/jpe-demo/README"/>
-      <copy todir="final-distributives/jpe-demo/demo">
-        <fileset dir="demo" excludes="CVS/*,**/CVS" />
+            tofile="final-distributives/jpe-demo-${version}/README"/>
+      <copy todir="final-distributives/jpe-demo-${version}/demo">
+        <fileset dir="demo" excludes="CVS/*,**/CVS,.svn/*,**/svn." />
       </copy>
       <zip destfile="final-distributives/jpe-demo-${version}.zip"
            basedir="final-distributives"
-           includes="jpe-demo/**/*.*,jpe-demo/README"
+           includes="jpe-demo-${version}/**/*.*,jpe-demo-${version}/README"
            excludes="CVS/*,**/CVS"
       />
     </target>

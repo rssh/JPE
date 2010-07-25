@@ -1,17 +1,12 @@
 /*
  * MarkNumberOfChildsInSuper.java
  *
- * Created on October 2, 2007, 6:59 PM
- *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
  */
 
 package ua.gradsoft.jpe.optimizations;
 
+import java.util.Map;
 import ua.gradsoft.javachecker.EntityNotFoundException;
-import ua.gradsoft.javachecker.JavaFacts;
-import ua.gradsoft.javachecker.checkers.JavaTypeModelOnePassProcessor;
 import ua.gradsoft.javachecker.models.JavaTermTypeAbstractModel;
 import ua.gradsoft.javachecker.models.JavaTypeModel;
 import ua.gradsoft.javachecker.models.TermUtils;
@@ -47,6 +42,10 @@ public class MarkNumberOfChildsInSuper
                   superClass.setAttribute(ATTRIBUTE_NAME,TermUtils.createInt(nDerived+1));                  
               }
           }
+      }
+      Map<String,JavaTypeModel> nested = tm.getNestedTypeModels();
+      for(JavaTypeModel t: nested.values()) {
+          process((JavaTermTypeAbstractModel)t);
       }
     }
     

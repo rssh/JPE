@@ -18,6 +18,7 @@
     <target name="clean-all" depends="clean">
       <delete>
        <fileset dir="lib" includes="**/*.jar" />
+       <fileset dir="final-distributives" includes="**/*" />
       </delete>
     </target>
 

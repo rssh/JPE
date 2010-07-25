@@ -29,7 +29,7 @@
     <artifact name="TermWare" type="jar" />
    </dependency>
    <dependency org="ua.gradsoft" name="javachecker" 
-               rev="[2.5.3,)" >
+               rev="[2.5.4,)" >
         <artifact name="JavaChecker" type="jar" />
         <artifact name="JavaChecker2Annotations" type="jar" />
    </dependency>
