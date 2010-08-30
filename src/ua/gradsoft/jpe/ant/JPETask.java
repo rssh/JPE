@@ -9,6 +9,7 @@ package ua.gradsoft.jpe.ant;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -58,6 +59,12 @@ public class JPETask extends Task {
     
     public void addConfiguredIncludedirs(DirSet dirSet) {
         dirSet.setProject(this.getProject());
+        if (configuration_.getIncludeDirs()==null) {
+            configuration_.setIncludeDirs(new ArrayList<String>());
+        }
+        if (dirSet.getDir(getProject())==null) {
+            System.err.print("dirSet.getDir()==null ");
+        }
         configuration_.getIncludeDirs().add(dirSet.getDir(getProject()).getAbsolutePath());
     }
     
