@@ -307,7 +307,7 @@ domain(M2J,
            AppendName(Name($x),$z) -> Name(List.append($z,$x)),
 
            VariableModel($name,$model) 
-             [ isStaticField($model) ] -> Field($model.getOwner().getFullNameAsTerm(),$name) 
+             [ isStaticField($model) ] -> Field($model.getOwnerType().getFullNameAsTerm(),$name) 
                                       !-> $name,
 
            InclusiveOrExpressionModel($x,$y,$ctx) -> InclusiveOrExpression($x,$y), 
