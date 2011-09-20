@@ -1,0 +1,42 @@
+
+
+  JPE -- partial implementation of Java Partial Evaluator.
+
+  It took Java program and values for set of compile-time constansts
+ and perform partial evaluation (or we can say - partial specialization 
+ against set of constant) of program, than (optionally) perform elimination 
+ of dead code and class finalization.
+
+
+ Example: let we have something like:
+
+    int main(String[] args)
+    {
+      if (CompileTimeConstants.DEBUG) {
+         System.out.println("debug");
+      }
+      System.out.println("Hello");
+    }
+
+  Then we can receive two possible specializations:
+
+    int main(String[] args)
+    {
+         System.out.println("debug");
+      System.out.println("Hello");
+    }
+
+   when CompileTimeConstants.DEBUG is true or
+
+    int main(String[] args)
+    {
+      System.out.println("Hello");
+    }
+
+   when one is false.
+
+  Users guid in odf format is situated in docs directory.
+
+  You can use JPE according to GPL-v3 license or ask me for other license.
+
+  // Ruslan Shevchenko, ruslan@shevchenko.kiev.ua  
